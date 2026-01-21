@@ -32,13 +32,11 @@ pipeline:
                   identifier: run_unit_test
                   spec:
                     connectorRef: <+input>
-                    image: golang:1.15
+                    image: golang:1.21
                     shell: Sh
                     command: |-
-                      set +e
                       go get gotest.tools/gotestsum
                       gotestsum --format=standard-verbose --junitfile unit-tests.xml
-                      exit 0
                     reports:
                       type: JUnit
                       spec:
@@ -50,13 +48,11 @@ pipeline:
                   identifier: go_build
                   spec:
                     connectorRef: <+input>
-                    image: golang:1.15
+                    image: golang:1.21
                     shell: Sh
                     command: |-
-                      set +e
                       go get gotest.tools/gotestsum
                       CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo
-                      exit 0
         variables:
           - name: myStageVar
             type: String
