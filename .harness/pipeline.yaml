@@ -48,6 +48,23 @@ pipeline:
                       access_token: <+input>
                     outputVariables:
                       - name: scanResults
+              - step:
+                  identifier: owasp_zap
+                  name: OWASP ZAP Security Scan
+                  type: Zap
+                  timeout: 10m
+                  spec:
+                    config: standard
+                    mode: orchestration
+                    target:
+                      type: repository
+                      workspace: <+pipeline.stages.security_tests.spec.cloneCodebase>
+                      detection: auto
+                    advanced:
+                      fail_on_severity: high
+                    tool:
+                      context: /go-app
+                      port: 8090
             rollbackSteps: []
     - stage:
         name: "build test and run "
@@ -100,4 +117,4 @@ pipeline:
         when:
           pipelineStatus: Success
           condition: <+pipeline.stages.security_tests.status> == "SUCCESS"
-  description: This pipeline was updated by Harness AI on 2026-01-21 18:32:25 UTC by cargurus-user11@gmail.com.
+  description: This pipeline was updated by Harness AI on 2026-01-21 18:34:41 UTC by cargurus-user11@gmail.com.
