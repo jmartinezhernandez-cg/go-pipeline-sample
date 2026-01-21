@@ -27,45 +27,17 @@ pipeline:
           execution:
             steps:
               - step:
-                  identifier: fortify_sast
-                  name: Fortify SAST
-                  type: FortifyOnDemand
-                  timeout: 10m
-                  spec:
-                    config: default
-                    mode: orchestration
-                    target:
-                      type: repository
-                      workspace: <+pipeline.stages.security_tests.spec.cloneCodebase>
-                      detection: auto
-                    tool:
-                      app_name: <+pipeline.identifier>
-                      release_name: <+pipeline.sequenceId>
-                      target_language: go
-                    advanced:
-                      fail_on_severity: high
-                    auth:
-                      access_token: <+input>
-                    outputVariables:
-                      - name: scanResults
+                  name: fortify
+                  identifier: fortify
+                  template:
+                    templateRef: fortify
+                    versionLabel: v0.1
               - step:
-                  identifier: owasp_zap
-                  name: OWASP ZAP Security Scan
-                  type: Zap
-                  timeout: 10m
-                  spec:
-                    config: standard
-                    mode: orchestration
-                    target:
-                      type: repository
-                      workspace: <+pipeline.stages.security_tests.spec.cloneCodebase>
-                      detection: auto
-                    advanced:
-                      fail_on_severity: high
-                    tool:
-                      context: /go-app
-                      port: 8090
-            rollbackSteps: []
+                  name: owasp
+                  identifier: owasp
+                  template:
+                    templateRef: owasp
+                    versionLabel: v0.1
     - stage:
         name: "build test and run "
         identifier: build_test_and_run
