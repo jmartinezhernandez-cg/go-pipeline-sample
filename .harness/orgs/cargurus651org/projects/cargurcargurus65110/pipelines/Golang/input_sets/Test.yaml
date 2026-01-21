@@ -1,0 +1,34 @@
+inputSet:
+  pipeline:
+    identifier: Golang
+    properties:
+      ci:
+        codebase:
+          connectorRef: Test
+          build:
+            spec:
+              branch: main
+            type: branch
+          repoName: ""
+    stages:
+      - stage:
+          identifier: build_test_and_run
+          type: CI
+          spec:
+            execution:
+              steps:
+                - parallel:
+                    - step:
+                        identifier: go_build
+                        type: Run
+                        spec:
+                          connectorRef: dockerhub
+                    - step:
+                        identifier: run_unit_test
+                        type: Run
+                        spec:
+                          connectorRef: dockerhub
+  name: Test
+  identifier: Test
+  orgIdentifier: cargurus651org
+  projectIdentifier: cargurcargurus65110
