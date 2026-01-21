@@ -13,32 +13,6 @@ pipeline:
         build: <+input>
   stages:
     - stage:
-        name: Security Tests
-        identifier: security_tests
-        type: SecurityTests
-        spec:
-          cloneCodebase: true
-          platform:
-            os: Linux
-            arch: Amd64
-          runtime:
-            type: Cloud
-            spec: {}
-          execution:
-            steps:
-              - step:
-                  name: fortify
-                  identifier: fortify
-                  template:
-                    templateRef: fortify
-                    versionLabel: v0.1
-              - step:
-                  name: owasp
-                  identifier: owasp
-                  template:
-                    templateRef: owasp
-                    versionLabel: v0.1
-    - stage:
         name: "build test and run "
         identifier: build_test_and_run
         description: ""
@@ -80,6 +54,18 @@ pipeline:
                     command: |-
                       go get gotest.tools/gotestsum
                       CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo
+              - step:
+                  name: oawsp
+                  identifier: oawsp
+                  template:
+                    templateRef: owasp
+                    versionLabel: v0.1
+              - step:
+                  name: fortify
+                  identifier: fortify
+                  template:
+                    templateRef: fortify
+                    versionLabel: v0.1
             rollbackSteps: []
         variables:
           - name: myStageVar
