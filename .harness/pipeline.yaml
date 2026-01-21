@@ -72,7 +72,4 @@ pipeline:
             type: String
             description: ""
             value: stageVarValue
-        when:
-          pipelineStatus: Success
-          condition: <+pipeline.stages.security_tests.status> == "SUCCESS"
   description: This pipeline was updated by Harness AI on 2026-01-21 18:34:41 UTC by cargurus-user11@gmail.com.
