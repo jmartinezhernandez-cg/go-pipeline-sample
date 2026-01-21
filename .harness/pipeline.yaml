@@ -3,7 +3,8 @@ pipeline:
   identifier: Golang
   projectIdentifier: cargurcargurus65110
   orgIdentifier: cargurus651org
-  tags: {}
+  tags:
+    ai_generated: "true"
   properties:
     ci:
       codebase:
@@ -11,6 +12,43 @@ pipeline:
         repoName: go-pipeline-sample
         build: <+input>
   stages:
+    - stage:
+        name: Fortify Security Tests
+        identifier: security_tests
+        type: SecurityTests
+        spec:
+          cloneCodebase: true
+          platform:
+            os: Linux
+            arch: Amd64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  identifier: fortify_sast
+                  name: Fortify SAST
+                  type: FortifyOnDemand
+                  timeout: 10m
+                  spec:
+                    config: default
+                    mode: orchestration
+                    target:
+                      type: repository
+                      workspace: <+pipeline.stages.security_tests.spec.cloneCodebase>
+                      detection: auto
+                    tool:
+                      app_name: <+pipeline.identifier>
+                      release_name: <+pipeline.sequenceId>
+                      target_language: go
+                    advanced:
+                      fail_on_severity: high
+                    auth:
+                      access_token: <+input>
+                    outputVariables:
+                      - name: scanResults
+            rollbackSteps: []
     - stage:
         name: "build test and run "
         identifier: build_test_and_run
@@ -53,8 +91,13 @@ pipeline:
                     command: |-
                       go get gotest.tools/gotestsum
                       CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo
+            rollbackSteps: []
         variables:
           - name: myStageVar
             type: String
             description: ""
             value: stageVarValue
+        when:
+          pipelineStatus: Success
+          condition: <+pipeline.stages.security_tests.status> == "SUCCESS"
+  description: This pipeline was updated by Harness AI on 2026-01-21 18:32:25 UTC by cargurus-user11@gmail.com.
